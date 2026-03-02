@@ -686,6 +686,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--ink); color: var(--
       btn.style.opacity = '1';
       if (currentMode === 'signup' && selectedRole === 'client') {
         window.location.href = 'info.html';
+      }
+      else if (currentMode === 'signup' && selectedRole === 'freelancer') {
+        window.location.href = 'skill.html';
       } else {
         showPage(selectedRole === 'client' ? 'page-client' : 'page-freelancer');
       }

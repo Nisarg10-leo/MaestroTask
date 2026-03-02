@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaestroTask — Build Your Freelancer Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0a0a0f;
+  --paper:   #dde8f0;
+  --card:    #ffffff;
+  --gold:    #e8c547;
+  --gold-dk: #b8860b;
+  --teal:    #1a9e8f;
+  --teal-lt: #22c5b3;
+  --red:     #cc0000;
+  --muted:   #6b7a8a;
+  --border:  rgba(10,10,15,0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background:
+    radial-gradient(ellipse 80% 55% at 0% 0%,   rgba(26,158,143,.13) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 100% 10%, rgba(232,197,71,.09) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 50% at 50% 100%, rgba(26,158,143,.07) 0%, transparent 55%),
+    linear-gradient(150deg, #cdd9e8 0%, #d6e4ef 50%, #c8d8e8 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(10,10,15,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10,10,15,.03) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* ── NAV ── */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 66px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 5%;
+  background: rgba(205,217,232,.9); backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-box  { width: 38px; height: 38px; border-radius: 10px; background: var(--ink); display: grid; place-items: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 19px; color: var(--gold); }
+.logo-word { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--ink); letter-spacing: -.02em; }
+.logo-word em { color: var(--teal); font-style: normal; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-pill  { padding: 5px 14px; border-radius: 100px; background: rgba(26,158,143,.1); border: 1px solid rgba(26,158,143,.25); font-size: .75rem; font-weight: 700; color: var(--teal); letter-spacing: .04em; }
+.btn-back  { padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 9px; background: none; font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+.btn-back:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── WRAPPER ── */
+.wrapper { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 96px 20px 80px; }
+
+/* ── HEADER ── */
+.page-header { text-align: center; margin-bottom: 44px; animation: rise .8s cubic-bezier(.23,1,.32,1) both; }
+@keyframes rise { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+
+.eyebrow { display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 100px; background: rgba(26,158,143,.1); border: 1px solid rgba(26,158,143,.25); font-size: .73rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.35} }
+
+.page-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2rem,5vw,3rem); line-height: 1.05; letter-spacing: -.04em; color: var(--ink); margin-bottom: 12px; }
+.page-title .accent { color: var(--teal); }
+.page-sub { font-size: .97rem; color: var(--muted); max-width: 500px; margin: 0 auto; line-height: 1.75; }
+
+/* ── STEPPER ── */
+.stepper { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 44px; animation: rise .8s .1s cubic-bezier(.23,1,.32,1) both; flex-wrap: wrap; row-gap: 12px; }
+.snode { display: flex; align-items: center; gap: 7px; }
+.sball { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; font-weight: 800; flex-shrink: 0; transition: all .35s; }
+.sball.done { background: var(--teal); color: #fff; border: 2px solid var(--teal); }
+.sball.now  { background: var(--ink);  color: #fff; border: 2px solid var(--ink); box-shadow: 0 0 0 4px rgba(10,10,15,.1); }
+.sball.next { background: var(--card); color: var(--muted); border: 2px solid var(--border); }
+.sname { font-size: .72rem; font-weight: 600; color: var(--muted); }
+.sname.now { color: var(--ink); }
+.swire { width: 44px; height: 2px; background: var(--border); margin: 0 4px; border-radius: 1px; flex-shrink: 0; }
+.swire.done { background: var(--teal); }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { margin-bottom: 36px; animation: rise .8s .15s cubic-bezier(.23,1,.32,1) both; }
+.progress-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.progress-lbl { font-size: .73rem; font-weight: 600; color: var(--muted); }
+.progress-lbl.active { color: var(--teal); }
+.progress-track { height: 4px; background: var(--border); border-radius: 100px; overflow: hidden; }
+.progress-fill  { height: 100%; background: linear-gradient(90deg, var(--teal), var(--teal-lt)); border-radius: 100px; transition: width .5s cubic-bezier(.23,1,.32,1); width: 20%; }
+
+/* ── CARDS ── */
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 36px 40px; box-shadow: 0 8px 40px rgba(10,10,15,.1); margin-bottom: 20px; animation: rise .7s cubic-bezier(.23,1,.32,1) both; }
+.card-head { display: flex; align-items: center; gap: 12px; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.card-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 1.1rem; flex-shrink: 0; }
+.ci-teal { background: rgba(26,158,143,.1); }
+.ci-gold { background: rgba(232,197,71,.12); }
+.ci-ink  { background: rgba(10,10,15,.06); }
+.ci-purple { background: rgba(139,92,246,.1); }
+.ci-rose   { background: rgba(244,63,94,.08); }
+.card-lbl  { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 1.08rem; color: var(--ink); }
+.card-desc { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+
+/* ── FIELDS ── */
+.field    { margin-bottom: 20px; }
+.f2col    { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.f3col    { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+.lbl { display: flex; justify-content: space-between; align-items: baseline; font-size: .78rem; font-weight: 700; color: var(--ink); letter-spacing: .025em; margin-bottom: 7px; }
+.req { color: var(--red); }
+.opt { font-weight: 400; font-size: .73rem; color: var(--muted); }
+
+.inp, .sel, .txta {
+  width: 100%; padding: 12px 15px;
+  background: #f4f8fb; border: 1.5px solid var(--border);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif;
+  font-size: .9rem; color: var(--ink); outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.inp:focus, .sel:focus, .txta:focus { background: var(--card); border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,158,143,.12); }
+.inp::placeholder, .txta::placeholder { color: #b8c4cc; }
+.inp.bad, .sel.bad, .txta.bad { border-color: var(--red); box-shadow: 0 0 0 3px rgba(204,0,0,.09); }
+
+.sel { appearance: none; cursor: pointer; padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%236b7a8a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center; background-color: #f4f8fb; }
+.txta { resize: vertical; min-height: 130px; line-height: 1.65; }
+
+.hint { font-size: .72rem; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+.err  { font-size: .72rem; color: var(--red); margin-top: 5px; display: none; }
+.err.on { display: block; }
+
+/* file upload */
+.file-upload {
+  width: 100%; padding: 20px; border: 1.5px dashed rgba(26,158,143,.3);
+  border-radius: 10px; background: rgba(26,158,143,.03);
+  text-align: center; cursor: pointer; transition: all .2s;
+  font-size: .85rem; color: var(--muted);
+}
+.file-upload:hover { border-color: var(--teal); background: rgba(26,158,143,.06); color: var(--teal); }
+.file-upload input { display: none; }
+.file-name { font-size: .78rem; color: var(--teal); margin-top: 6px; font-weight: 600; }
+
+/* chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 7px 15px; border-radius: 100px; font-size: .8rem; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: #f4f8fb; color: var(--muted); transition: all .2s; user-select: none; }
+.chip:hover { border-color: var(--teal); color: var(--teal); }
+.chip.on { background: rgba(26,158,143,.1); border-color: var(--teal); color: var(--teal); font-weight: 700; }
+.chip.gold.on { background: rgba(232,197,71,.12); border-color: var(--gold); color: var(--gold-dk); }
+
+/* char counter */
+.char-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.char-n { font-size: .71rem; color: var(--muted); }
+.char-n.warn  { color: var(--gold-dk); }
+.char-n.limit { color: var(--red); }
+
+.divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+/* tag input */
+.tag-input-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; background: #f4f8fb; border: 1.5px solid var(--border); border-radius: 10px; min-height: 48px; align-items: center; cursor: text; transition: border-color .2s, box-shadow .2s; }
+.tag-input-wrap:focus-within { background: var(--card); border-color: var(--teal); box-shadow: 0 0 0 3px rgba(26,158,143,.12); }
+.tag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; background: rgba(26,158,143,.1); border: 1px solid rgba(26,158,143,.2); border-radius: 100px; font-size: .78rem; font-weight: 600; color: var(--teal); }
+.tag-remove { cursor: pointer; font-size: .9rem; line-height: 1; color: var(--teal); opacity: .7; }
+.tag-remove:hover { opacity: 1; }
+.tag-input { border: none; outline: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: .88rem; color: var(--ink); min-width: 120px; flex: 1; padding: 2px 0; }
+.tag-input::placeholder { color: #b8c4cc; }
+
+/* ── NAV BUTTONS ── */
+.step-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 28px 40px; background: var(--card); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 8px 40px rgba(10,10,15,.1); margin-bottom: 20px; animation: rise .8s .2s cubic-bezier(.23,1,.32,1) both; }
+.step-nav-info h3 { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 1rem; color: var(--ink); margin-bottom: 3px; }
+.step-nav-info p  { font-size: .78rem; color: var(--muted); }
+.nav-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn-prev { padding: 12px 22px; border: 1.5px solid var(--border); border-radius: 10px; background: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .88rem; color: var(--muted); cursor: pointer; transition: all .2s; }
+.btn-prev:hover { border-color: var(--ink); color: var(--ink); }
+.btn-prev:disabled { opacity: .35; cursor: not-allowed; }
+
+.btn-next { display: flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--teal); color: #fff; border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: .92rem; cursor: pointer; transition: all .22s; box-shadow: 0 4px 18px rgba(26,158,143,.3); white-space: nowrap; }
+.btn-next:hover { background: #167f72; transform: translateY(-1px); box-shadow: 0 7px 28px rgba(26,158,143,.4); }
+
+.btn-submit-final { display: flex; align-items: center; gap: 8px; padding: 13px 28px; background: var(--gold); color: var(--ink); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: .92rem; cursor: pointer; transition: all .22s; box-shadow: 0 4px 18px rgba(232,197,71,.35); white-space: nowrap; }
+.btn-submit-final:hover { background: var(--gold-dk); transform: translateY(-1px); box-shadow: 0 7px 28px rgba(232,197,71,.45); }
+.btn-submit-final:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* ── LOADING ── */
+.overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(10,10,15,.65); backdrop-filter: blur(8px); display: none; place-items: center; flex-direction: column; gap: 20px; }
+.overlay.show { display: grid; }
+.spin { width: 54px; height: 54px; border-radius: 50%; border: 3px solid rgba(232,197,71,.2); border-top-color: var(--gold); animation: sp .75s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }
+.overlay-msg { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: #fff; }
+
+/* ── SUCCESS ── */
+.success-ov { position: fixed; inset: 0; z-index: 9100; background: rgba(10,10,15,.72); backdrop-filter: blur(10px); display: none; place-items: center; }
+.success-ov.show { display: grid; }
+.success-box { background: var(--card); border-radius: 24px; padding: 56px 48px; text-align: center; max-width: 440px; width: 90%; box-shadow: 0 24px 80px rgba(10,10,15,.2); animation: pop .5s cubic-bezier(.23,1,.32,1) both; }
+@keyframes pop { from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)} }
+.s-emoji { font-size: 3rem; margin-bottom: 16px; }
+.s-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.65rem; color: var(--ink); letter-spacing: -.04em; margin-bottom: 10px; }
+.s-msg   { font-size: .88rem; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+.s-badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 16px; border-radius: 100px; background: rgba(232,197,71,.12); border: 1px solid rgba(232,197,71,.3); font-size: .78rem; font-weight: 700; color: var(--gold-dk); margin-bottom: 24px; }
+.btn-dash { display: inline-flex; align-items: center; gap: 8px; padding: 13px 30px; background: var(--gold); color: var(--ink); border: none; border-radius: 10px; font-family: 'Syne', sans-serif; font-weight: 800; font-size: .92rem; cursor: pointer; box-shadow: 0 4px 20px rgba(232,197,71,.3); transition: all .22s; }
+.btn-dash:hover { background: var(--gold-dk); transform: translateY(-2px); }
+.redirect-note { font-size: .72rem; color: var(--muted); margin-top: 10px; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(70px); padding: 13px 22px; border-radius: 12px; font-size: .85rem; font-weight: 600; box-shadow: 0 8px 40px rgba(10,10,15,.14); z-index: 9999; display: flex; align-items: center; gap: 9px; white-space: nowrap; transition: transform .4s cubic-bezier(.23,1,.32,1); pointer-events: none; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.ok  { background: var(--ink); color: #fff; }
+.toast.bad { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .card, .step-nav { padding: 24px 20px; }
+  .f2col, .f3col { grid-template-columns: 1fr; }
+  .step-nav { flex-direction: column; align-items: stretch; }
+  .nav-btns { flex-direction: column; }
+  .btn-next, .btn-submit-final, .btn-prev { width: 100%; justify-content: center; }
+  .swire { width: 28px; }
+  .sname { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="login.html" class="nav-logo">
+    <div class="logo-box">M</div>
+    <span class="logo-word">Maestro<em>Task</em></span>
+  </a>
+  <div class="nav-right">
+    <a href="login.html" class="btn-back">← Back to Sign Up</a>
+    <span class="nav-pill">Freelancer Onboarding</span>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> Freelancer Onboarding</div>
+    <h1 class="page-title">Build your <span class="accent">verified</span> profile</h1>
+    <p class="page-sub">Help clients discover exactly what you can build. Your profile is your proof — make it count.</p>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="snode"><div class="sball now" id="st1">1</div><span class="sname now" id="sl1">Academic</span></div>
+    <div class="swire" id="sw1"></div>
+    <div class="snode"><div class="sball next" id="st2">2</div><span class="sname" id="sl2">Skills</span></div>
+    <div class="swire" id="sw2"></div>
+    <div class="snode"><div class="sball next" id="st3">3</div><span class="sname" id="sl3">Portfolio</span></div>
+    <div class="swire" id="sw3"></div>
+    <div class="snode"><div class="sball next" id="st4">4</div><span class="sname" id="sl4">Preferences</span></div>
+    <div class="swire" id="sw4"></div>
+    <div class="snode"><div class="sball next" id="st5">5</div><span class="sname" id="sl5">Bio</span></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span class="progress-lbl active" id="pl-step">Step 1 of 5</span>
+      <span class="progress-lbl" id="pl-name">Academic Information</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <!-- ══ STEP 1: ACADEMIC ══ -->
+  <div class="form-step active" id="step-1">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-teal">🎓</div>
+        <div><div class="card-lbl">Academic Information</div><div class="card-desc">Tell us about your educational background.</div></div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="college">College / University <span class="req">*</span></label>
+          <input class="inp" id="college" type="text" placeholder="e.g. IIT Madras, VIT Chennai…">
+          <div class="err" id="e-college">Please enter your college name.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="degree">Degree / Programme <span class="req">*</span></label>
+          <select class="sel" id="degree">
+            <option value="" disabled selected>Select degree</option>
+            <option>B.E. / B.Tech</option>
+            <option>B.Sc</option>
+            <option>B.Com</option>
+            <option>B.A.</option>
+            <option>BCA</option>
+            <option>BBA</option>
+            <option>M.E. / M.Tech</option>
+            <option>M.Sc</option>
+            <option>MBA</option>
+            <option>MCA</option>
+            <option>Ph.D</option>
+            <option>Diploma</option>
+            <option>Other</option>
+          </select>
+          <div class="err" id="e-degree">Please select your degree.</div>
+        </div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="specialization">Specialization / Branch <span class="req">*</span></label>
+          <input class="inp" id="specialization" type="text" placeholder="e.g. Computer Science, ECE, Commerce…">
+          <div class="err" id="e-spec">Please enter your specialization.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="year-study">Current Year of Study <span class="req">*</span></label>
+          <select class="sel" id="year-study">
+            <option value="" disabled selected>Select year</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+            <option value="5">5th Year</option>
+            <option value="pg1">PG – 1st Year</option>
+            <option value="pg2">PG – 2nd Year</option>
+            <option value="grad">Graduated</option>
+          </select>
+          <div class="err" id="e-year">Please select your year of study.</div>
+        </div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="grad-year">Expected Graduation Year <span class="req">*</span></label>
+          <select class="sel" id="grad-year">
+            <option value="" disabled selected>Select year</option>
+            <option>2024</option><option>2025</option><option>2026</option>
+            <option>2027</option><option>2028</option><option>2029</option>
+            <option>2030</option><option>Already Graduated</option>
+          </select>
+          <div class="err" id="e-grad">Please select graduation year.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="cgpa">CGPA / Percentage <span class="opt">(optional)</span></label>
+          <input class="inp" id="cgpa" type="text" placeholder="e.g. 8.6 / 10 or 86%">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: SKILLS ══ -->
+  <div class="form-step" id="step-2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-gold">⚡</div>
+        <div><div class="card-lbl">Skill Details</div><div class="card-desc">What can you build? Let your skills speak.</div></div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="primary-skill">Primary Skill <span class="req">*</span></label>
+          <select class="sel" id="primary-skill">
+            <option value="" disabled selected>Select your main skill</option>
+            <option>Web Development</option>
+            <option>Mobile App Development</option>
+            <option>UI/UX Design</option>
+            <option>Data Science & ML</option>
+            <option>AI & Generative AI</option>
+            <option>Backend / API Development</option>
+            <option>DevOps & Cloud</option>
+            <option>Cybersecurity</option>
+            <option>Content Writing</option>
+            <option>Digital Marketing & SEO</option>
+            <option>Graphic Design</option>
+            <option>Video Editing</option>
+            <option>Research & Analysis</option>
+            <option>Other</option>
+          </select>
+          <div class="err" id="e-primary">Please select your primary skill.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="exp-level">Experience Level <span class="req">*</span></label>
+          <select class="sel" id="exp-level">
+            <option value="" disabled selected>Select level</option>
+            <option value="beginner">🌱 Beginner (0–6 months)</option>
+            <option value="intermediate">🔥 Intermediate (6m–2 years)</option>
+            <option value="advanced">⚡ Advanced (2–4 years)</option>
+            <option value="expert">🏆 Expert (4+ years)</option>
+          </select>
+          <div class="err" id="e-exp">Please select your experience level.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Secondary Skills <span class="opt">(optional)</span></label>
+        <div class="chips" id="sec-skill-chips">
+          <div class="chip" onclick="multi(this)">⚛️ React</div>
+          <div class="chip" onclick="multi(this)">🟢 Node.js</div>
+          <div class="chip" onclick="multi(this)">🐍 Python</div>
+          <div class="chip" onclick="multi(this)">🎨 Figma</div>
+          <div class="chip" onclick="multi(this)">☁️ AWS</div>
+          <div class="chip" onclick="multi(this)">📊 SQL</div>
+          <div class="chip" onclick="multi(this)">📱 Flutter</div>
+          <div class="chip" onclick="multi(this)">🔷 TypeScript</div>
+          <div class="chip" onclick="multi(this)">🤖 TensorFlow</div>
+          <div class="chip" onclick="multi(this)">🐳 Docker</div>
+          <div class="chip" onclick="multi(this)">🌐 Next.js</div>
+          <div class="chip" onclick="multi(this)">🔥 Firebase</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label class="lbl">Tools & Technologies Known <span class="req">*</span></label>
+        <div class="tag-input-wrap" id="tools-wrap" onclick="document.getElementById('tools-input').focus()">
+          <input class="tag-input" id="tools-input" type="text" placeholder="Type a tool and press Enter (e.g. VS Code, Postman…)">
+        </div>
+        <div class="hint">Press Enter or comma to add each tool.</div>
+        <div class="err" id="e-tools">Please add at least one tool.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: PORTFOLIO ══ -->
+  <div class="form-step" id="step-3">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-purple">🔗</div>
+        <div><div class="card-lbl">Portfolio & Links</div><div class="card-desc">Show your work — links speak louder than words.</div></div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="github">GitHub Profile <span class="req">*</span></label>
+          <input class="inp" id="github" type="url" placeholder="https://github.com/yourusername">
+          <div class="err" id="e-github">Please enter your GitHub URL.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="linkedin">LinkedIn Profile <span class="req">*</span></label>
+          <input class="inp" id="linkedin" type="url" placeholder="https://linkedin.com/in/yourprofile">
+          <div class="err" id="e-linkedin">Please enter your LinkedIn URL.</div>
+        </div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="portfolio">Personal Portfolio / Website <span class="opt">(optional)</span></label>
+          <input class="inp" id="portfolio" type="url" placeholder="https://yourportfolio.com">
+        </div>
+        <div class="field">
+          <label class="lbl" for="other-link">Other Link <span class="opt">(Behance, Dribbble, etc.)</span></label>
+          <input class="inp" id="other-link" type="url" placeholder="https://behance.net/yourname">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label class="lbl">Resume Upload <span class="opt">(optional — PDF only)</span></label>
+        <label class="file-upload" id="resume-label">
+          <input type="file" id="resume-file" accept=".pdf" onchange="handleFile(this)">
+          <span id="resume-text">📄 Click to upload your resume (PDF, max 5MB)</span>
+        </label>
+        <div class="file-name" id="resume-name"></div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Featured Projects <span class="opt">(optional)</span></label>
+        <div class="tag-input-wrap" id="projects-wrap" onclick="document.getElementById('projects-input').focus()">
+          <input class="tag-input" id="projects-input" type="text" placeholder="Add a project name and press Enter…">
+        </div>
+        <div class="hint">Add your notable projects one by one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: PREFERENCES ══ -->
+  <div class="form-step" id="step-4">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-rose">⚙️</div>
+        <div><div class="card-lbl">Work Preferences</div><div class="card-desc">How and when do you like to work?</div></div>
+      </div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="availability">Availability per Week <span class="req">*</span></label>
+          <select class="sel" id="availability">
+            <option value="" disabled selected>Select hours</option>
+            <option value="5">Less than 5 hrs/week</option>
+            <option value="10">5–10 hrs/week</option>
+            <option value="20">10–20 hrs/week</option>
+            <option value="30">20–30 hrs/week</option>
+            <option value="40">Full-time (40+ hrs)</option>
+          </select>
+          <div class="err" id="e-avail">Please select your availability.</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="remote-pref">Remote Preference <span class="req">*</span></label>
+          <select class="sel" id="remote-pref">
+            <option value="" disabled selected>Select preference</option>
+            <option value="remote">🌐 Fully Remote</option>
+            <option value="hybrid">🏢 Hybrid (Remote + On-site)</option>
+            <option value="onsite">📍 On-site Only</option>
+            <option value="any">✅ Open to Any</option>
+          </select>
+          <div class="err" id="e-remote">Please select your remote preference.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Preferred Project Type <span class="req">*</span></label>
+        <div class="chips" id="proj-type-chips">
+          <div class="chip gold" onclick="multi(this)">🚀 Short-term Gigs</div>
+          <div class="chip gold" onclick="multi(this)">📅 Long-term Projects</div>
+          <div class="chip gold" onclick="multi(this)">🔄 Recurring Work</div>
+          <div class="chip gold" onclick="multi(this)">💡 Startup / MVP</div>
+          <div class="chip gold" onclick="multi(this)">🎓 Academic Projects</div>
+          <div class="chip gold" onclick="multi(this)">🏢 Corporate Work</div>
+          <div class="chip gold" onclick="multi(this)">🌐 Open Source</div>
+        </div>
+        <div class="err" id="e-proj-type">Please select at least one project type.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="f2col">
+        <div class="field">
+          <label class="lbl" for="rate">Expected Rate (₹ per hour) <span class="opt">(optional)</span></label>
+          <input class="inp" id="rate" type="text" placeholder="e.g. ₹300 – ₹500 / hr">
+        </div>
+        <div class="field">
+          <label class="lbl" for="timezone">Timezone <span class="opt">(optional)</span></label>
+          <select class="sel" id="timezone">
+            <option value="" disabled selected>Select timezone</option>
+            <option value="IST">🇮🇳 IST (UTC+5:30)</option>
+            <option value="UTC">🌐 UTC</option>
+            <option value="EST">🇺🇸 EST (UTC-5)</option>
+            <option value="PST">🇺🇸 PST (UTC-8)</option>
+            <option value="GMT">🇬🇧 GMT</option>
+            <option value="SGT">🇸🇬 SGT (UTC+8)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 5: BIO ══ -->
+  <div class="form-step" id="step-5">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-ink">✍️</div>
+        <div><div class="card-lbl">Professional Bio</div><div class="card-desc">Tell the world what you can build and contribute.</div></div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="bio">Your Bio <span class="req">*</span></label>
+        <textarea class="txta" id="bio" maxlength="800" style="min-height:160px;"
+          placeholder="Describe yourself as a freelancer — what you build, your approach, what types of projects excite you, and why clients should choose you. Be specific and genuine."
+          oninput="cc('bio','cc-bio',800)"></textarea>
+        <div class="char-row">
+          <div class="hint" style="margin-top:0">Minimum 80 characters. Be specific — vague bios get fewer responses.</div>
+          <div class="char-n" id="cc-bio">0 / 800</div>
+        </div>
+        <div class="err" id="e-bio">Please write a bio (at least 80 characters).</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label class="lbl" for="tagline">Profile Tagline <span class="req">*</span></label>
+        <input class="inp" id="tagline" type="text" placeholder="e.g. Full-Stack Developer who ships pixel-perfect products fast" maxlength="90" oninput="cc('tagline','cc-tag',90)">
+        <div class="char-row">
+          <div class="hint" style="margin-top:0">One punchy line that captures your value.</div>
+          <div class="char-n" id="cc-tag">0 / 90</div>
+        </div>
+        <div class="err" id="e-tagline">Please enter a profile tagline.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Languages Spoken <span class="opt">(optional)</span></label>
+        <div class="chips" id="lang-chips">
+          <div class="chip" onclick="multi(this)">🇮🇳 Tamil</div>
+          <div class="chip" onclick="multi(this)">🇮🇳 Hindi</div>
+          <div class="chip" onclick="multi(this)">🇬🇧 English</div>
+          <div class="chip" onclick="multi(this)">🇮🇳 Telugu</div>
+          <div class="chip" onclick="multi(this)">🇮🇳 Kannada</div>
+          <div class="chip" onclick="multi(this)">🇮🇳 Malayalam</div>
+          <div class="chip" onclick="multi(this)">🇫🇷 French</div>
+          <div class="chip" onclick="multi(this)">🇩🇪 German</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- PROFILE PREVIEW -->
+      <div style="background: rgba(26,158,143,.04); border: 1px solid rgba(26,158,143,.15); border-radius: 14px; padding: 20px 24px;">
+        <div style="font-size:.78rem; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;">📋 Profile Summary Preview</div>
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1a9e8f,#22c5b3);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;" id="avatar-initials">?</div>
+          <div>
+            <div style="font-weight:700;font-size:.95rem;color:var(--ink);" id="preview-tagline">Your tagline will appear here…</div>
+            <div style="font-size:.78rem;color:var(--muted);margin-top:3px;" id="preview-skill">Primary skill not set</div>
+          </div>
+          <div style="margin-left:auto;">
+            <div style="background:rgba(232,197,71,.12);border:1px solid rgba(232,197,71,.3);color:var(--gold-dk);font-size:.72rem;font-weight:700;padding:4px 12px;border-radius:100px;">⏳ Pending Verification</div>
+          </div>
+        </div>
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.65;" id="preview-bio">Your bio will appear here as you type…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP NAV -->
+  <div class="step-nav">
+    <div class="step-nav-info">
+      <h3 id="nav-title">Academic Information</h3>
+      <p id="nav-sub">Fill in your educational background to get started.</p>
+    </div>
+    <div class="nav-btns">
+      <button class="btn-prev" id="btn-prev" onclick="prevStep()" disabled>← Previous</button>
+      <button class="btn-next" id="btn-next" onclick="nextStep()">Next Step →</button>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- LOADING -->
+<div class="overlay" id="overlay">
+  <div class="spin"></div>
+  <div class="overlay-msg">Creating your profile…</div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-ov" id="success-ov">
+  <div class="success-box">
+    <div class="s-emoji">🎉</div>
+    <h2 class="s-title">Profile Created!</h2>
+    <p class="s-msg">Your freelancer profile has been submitted. Our AI will verify your skills and score your profile shortly.</p>
+    <div class="s-badge">⏳ Pending Skill Verification</div>
+    <br>
+    <button class="btn-dash" onclick="goToDash()">Go to Dashboard →</button>
+    <div class="redirect-note">Auto-redirecting in <strong id="cdown">5</strong>s…</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── STATE ── */
+let currentStep = 1;
+const TOTAL_STEPS = 5;
+const toolTags = [];
+const projectTags = [];
+
+const stepMeta = [
+  { title: 'Academic Information',    sub: 'Fill in your educational background to get started.' },
+  { title: 'Skill Details',           sub: 'Tell us what you know and how well you know it.' },
+  { title: 'Portfolio & Links',        sub: 'Share your GitHub, LinkedIn and portfolio.' },
+  { title: 'Work Preferences',        sub: 'Set your availability and project preferences.' },
+  { title: 'Professional Bio',        sub: 'Write your tagline and bio — your profile\'s face.' }
+];
+
+const progressLabels = ['Academic', 'Skills', 'Portfolio', 'Preferences', 'Bio'];
+
+/* ── INIT ── */
+updateStepper();
+updateNav();
+
+/* ── STEP NAVIGATION ── */
+function nextStep() {
+  if (!validateStep(currentStep)) return;
+  if (currentStep === TOTAL_STEPS) { handleSubmit(); return; }
+  currentStep++;
+  showStep();
+}
+function prevStep() {
+  if (currentStep === 1) return;
+  currentStep--;
+  showStep();
+}
+function showStep() {
+  document.querySelectorAll('.form-step').forEach((s, i) => {
+    s.classList.toggle('active', i + 1 === currentStep);
+  });
+  updateStepper();
+  updateNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepper() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const ball = document.getElementById('st' + i);
+    const lbl  = document.getElementById('sl' + i);
+    const wire = document.getElementById('sw' + i);
+    ball.className = 'sball ' + (i < currentStep ? 'done' : i === currentStep ? 'now' : 'next');
+    ball.textContent = i < currentStep ? '✓' : i;
+    lbl.className = 'sname' + (i === currentStep ? ' now' : '');
+    if (wire) wire.className = 'swire' + (i < currentStep ? ' done' : '');
+  }
+  // progress bar
+  const pct = (currentStep / TOTAL_STEPS) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('pl-step').textContent = 'Step ' + currentStep + ' of ' + TOTAL_STEPS;
+  document.getElementById('pl-name').textContent = stepMeta[currentStep - 1].title;
+}
+
+function updateNav() {
+  const meta = stepMeta[currentStep - 1];
+  document.getElementById('nav-title').textContent = meta.title;
+  document.getElementById('nav-sub').textContent   = meta.sub;
+  document.getElementById('btn-prev').disabled = currentStep === 1;
+  const nextBtn = document.getElementById('btn-next');
+  if (currentStep === TOTAL_STEPS) {
+    nextBtn.className = 'btn-submit-final';
+    nextBtn.innerHTML = '🚀 Submit Profile';
+  } else {
+    nextBtn.className = 'btn-next';
+    nextBtn.innerHTML = 'Next Step →';
+  }
+}
+
+/* ── VALIDATION ── */
+function validateStep(step) {
+  let ok = true;
+  const req = (id, errId, test) => {
+    const f = document.getElementById(id), e = document.getElementById(errId);
+    if (!test) { f && f.classList.add('bad'); e && e.classList.add('on'); ok = false; }
+    else       { f && f.classList.remove('bad'); e && e.classList.remove('on'); }
+  };
+
+  if (step === 1) {
+    req('college',    'e-college',  !!g('college').value.trim());
+    req('degree',     'e-degree',   !!g('degree').value);
+    req('specialization','e-spec',  !!g('specialization').value.trim());
+    req('year-study', 'e-year',     !!g('year-study').value);
+    req('grad-year',  'e-grad',     !!g('grad-year').value);
+  } else if (step === 2) {
+    req('primary-skill','e-primary',!!g('primary-skill').value);
+    req('exp-level',   'e-exp',     !!g('exp-level').value);
+    const hasTools = toolTags.length > 0 || g('tools-input').value.trim();
+    const toolErr = document.getElementById('e-tools');
+    if (!hasTools) { toolErr.classList.add('on'); ok = false; }
+    else toolErr.classList.remove('on');
+    if (hasTools && g('tools-input').value.trim()) addTag('tools', g('tools-input').value.trim());
+  } else if (step === 3) {
+    req('github',   'e-github',   isValidUrl(g('github').value.trim()));
+    req('linkedin', 'e-linkedin', isValidUrl(g('linkedin').value.trim()));
+  } else if (step === 4) {
+    req('availability', 'e-avail',    !!g('availability').value);
+    req('remote-pref',  'e-remote',   !!g('remote-pref').value);
+    const pt = chipsOf('proj-type-chips');
+    const ptErr = document.getElementById('e-proj-type');
+    if (!pt.length) { ptErr.classList.add('on'); ok = false; } else ptErr.classList.remove('on');
+  } else if (step === 5) {
+    const bio = g('bio').value.trim();
+    req('bio',     'e-bio',     bio.length >= 80);
+    req('tagline', 'e-tagline', !!g('tagline').value.trim());
+  }
+
+  if (!ok) showToast('⚠️ Please fill in all required fields.', 'bad');
+  return ok;
+}
+
+function isValidUrl(v) {
+  try { new URL(v); return true; } catch { return false; }
+}
+function g(id) { return document.getElementById(id); }
+
+/* ── CHIP HELPERS ── */
+function multi(el) { el.classList.toggle('on'); }
+function chipsOf(id) { return [...document.querySelectorAll('#' + id + ' .chip.on')].map(c => c.textContent.trim()); }
+
+/* ── TAG INPUT ── */
+function addTag(type, val) {
+  val = val.trim().replace(/,/g, '');
+  if (!val) return;
+  const arr  = type === 'tools' ? toolTags : projectTags;
+  const wrap = g(type + '-wrap');
+  const inp  = g(type + '-input');
+  if (arr.includes(val)) return;
+  arr.push(val);
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.innerHTML = `${val} <span class="tag-remove" onclick="removeTag('${type}','${val}',this)">×</span>`;
+  wrap.insertBefore(tag, inp);
+  inp.value = '';
+}
+function removeTag(type, val, el) {
+  const arr = type === 'tools' ? toolTags : projectTags;
+  const i = arr.indexOf(val);
+  if (i > -1) arr.splice(i, 1);
+  el.closest('.tag').remove();
+}
+
+['tools', 'projects'].forEach(type => {
+  const inp = g(type + '-input');
+  if (!inp) return;
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(type, inp.value); }
+    if (e.key === 'Backspace' && !inp.value) {
+      const arr = type === 'tools' ? toolTags : projectTags;
+      if (arr.length) removeTag(type, arr[arr.length-1], g(type+'-wrap').querySelector('.tag:last-of-type .tag-remove'));
+    }
+  });
+});
+
+/* ── FILE UPLOAD ── */
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('File too large — max 5MB', 'bad'); return; }
+  g('resume-name').textContent = '✓ ' + file.name;
+}
+
+/* ── CHAR COUNTER ── */
+function cc(inId, numId, max) {
+  const v = g(inId).value.length;
+  const el = g(numId);
+  el.textContent = v + ' / ' + max;
+  el.className = 'char-n' + (v > max * .9 ? ' warn' : '') + (v >= max ? ' limit' : '');
+}
+
+/* ── LIVE PREVIEW (Step 5) ── */
+g('tagline').addEventListener('input', () => {
+  g('preview-tagline').textContent = g('tagline').value || 'Your tagline will appear here…';
+});
+g('bio').addEventListener('input', () => {
+  g('preview-bio').textContent = g('bio').value || 'Your bio will appear here as you type…';
+  cc('bio', 'cc-bio', 800);
+});
+
+/* ── SUBMIT ── */
+async function handleSubmit() {
+  if (!validateStep(5)) return;
+
+  const btn = g('btn-next');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+  g('overlay').classList.add('show');
+
+  const data = {
+    college:       g('college').value.trim(),
+    degree:        g('degree').value,
+    specialization:g('specialization').value.trim(),
+    year_of_study: g('year-study').value,
+    grad_year:     g('grad-year').value,
+    cgpa:          g('cgpa').value.trim() || null,
+    primary_skill: g('primary-skill').value,
+    exp_level:     g('exp-level').value,
+    secondary_skills: chipsOf('sec-skill-chips'),
+    tools:         toolTags,
+    github:        g('github').value.trim(),
+    linkedin:      g('linkedin').value.trim(),
+    portfolio:     g('portfolio').value.trim() || null,
+    other_link:    g('other-link').value.trim() || null,
+    projects:      projectTags,
+    availability:  g('availability').value,
+    remote_pref:   g('remote-pref').value,
+    project_types: chipsOf('proj-type-chips'),
+    rate:          g('rate').value.trim() || null,
+    timezone:      g('timezone').value || null,
+    bio:           g('bio').value.trim(),
+    tagline:       g('tagline').value.trim(),
+    languages:     chipsOf('lang-chips'),
+    status:        'pending_verification',
+    submitted_at:  new Date().toISOString()
+  };
+
+  localStorage.setItem('mt_freelancer_profile', JSON.stringify(data));
+  await new Promise(r => setTimeout(r, 1400));
+
+  g('overlay').classList.remove('show');
+  g('success-ov').classList.add('show');
+
+  let n = 5;
+  const cd = g('cdown');
+  const iv = setInterval(() => { if (--n <= 0) { clearInterval(iv); goToDash(); } else cd.textContent = n; }, 1000);
+}
+
+function goToDash() { window.location.href = 'login.html?dashboard=freelancer'; }
+
+/* ── CLEAR ERRORS ON INPUT ── */
+document.querySelectorAll('.inp,.sel,.txta').forEach(el => {
+  el.addEventListener('input',  () => el.classList.remove('bad'));
+  el.addEventListener('change', () => el.classList.remove('bad'));
+});
+
+/* ── TOAST ── */
+function showToast(msg, type = 'ok') {
+  const t = g('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3400);
+}
+</script>
+</body>
+</html>
