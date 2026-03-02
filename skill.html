@@ -173,6 +173,29 @@ body::before {
 .tag-input { border: none; outline: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: .88rem; color: var(--ink); min-width: 120px; flex: 1; padding: 2px 0; }
 .tag-input::placeholder { color: #b8c4cc; }
 
+/* skill picker */
+.skill-add-row { display: flex; gap: 10px; align-items: stretch; }
+.skill-add-row .sel { flex: 1; }
+.btn-add-skill {
+  padding: 0 16px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: #f4f8fb; font-family: 'DM Sans', sans-serif; font-size: .85rem;
+  font-weight: 700; color: var(--ink); cursor: pointer; transition: all .2s;
+  white-space: nowrap;
+}
+.btn-add-skill:hover { border-color: var(--teal); color: var(--teal); }
+.skill-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.skill-item {
+  display: flex; gap: 10px; align-items: center; padding: 10px 12px;
+  border: 1.5px solid var(--border); border-radius: 10px; background: #f4f8fb;
+}
+.skill-item-name { min-width: 170px; font-size: .84rem; font-weight: 700; color: var(--ink); }
+.skill-item .inp { margin: 0; background: var(--card); }
+.skill-remove {
+  border: none; background: transparent; color: var(--muted); font-size: 1rem;
+  cursor: pointer; line-height: 1; padding: 3px 4px;
+}
+.skill-remove:hover { color: var(--red); }
+
 /* ── NAV BUTTONS ── */
 .step-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 28px 40px; background: var(--card); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 8px 40px rgba(10,10,15,.1); margin-bottom: 20px; animation: rise .8s .2s cubic-bezier(.23,1,.32,1) both; }
 .step-nav-info h3 { font-family: 'DM Sans', sans-serif; font-weight: 800; font-size: 1rem; color: var(--ink); margin-bottom: 3px; }
@@ -220,6 +243,8 @@ body::before {
 @media (max-width: 640px) {
   .card, .step-nav { padding: 24px 20px; }
   .f2col, .f3col { grid-template-columns: 1fr; }
+  .skill-add-row, .skill-item { flex-direction: column; align-items: stretch; }
+  .skill-item-name { min-width: 0; }
   .step-nav { flex-direction: column; align-items: stretch; }
   .nav-btns { flex-direction: column; }
   .btn-next, .btn-submit-final, .btn-prev { width: 100%; justify-content: center; }
@@ -361,9 +386,10 @@ body::before {
 
       <div class="f2col">
         <div class="field">
-          <label class="lbl" for="primary-skill">Primary Skill <span class="req">*</span></label>
-          <select class="sel" id="primary-skill">
-            <option value="" disabled selected>Select your main skill</option>
+          <label class="lbl" for="skill-select">Skills <span class="req">*</span></label>
+          <div class="skill-add-row">
+            <select class="sel" id="skill-select">
+            <option value="" disabled selected>Select a skill</option>
             <option>Web Development</option>
             <option>Mobile App Development</option>
             <option>UI/UX Design</option>
@@ -378,8 +404,13 @@ body::before {
             <option>Video Editing</option>
             <option>Research & Analysis</option>
             <option>Other</option>
-          </select>
-          <div class="err" id="e-primary">Please select your primary skill.</div>
+            </select>
+            <button type="button" class="btn-add-skill" onclick="addSelectedSkill()">+ Add Skill</button>
+          </div>
+          <div class="hint">Add at least 3 skills. If you pick "Other", specify the exact field.</div>
+          <div class="skill-list" id="selected-skill-list"></div>
+          <div class="err" id="e-skills">Please add at least 3 skills.</div>
+          <div class="err" id="e-skill-fields">Please specify the field for "Other" skill.</div>
         </div>
         <div class="field">
           <label class="lbl" for="exp-level">Experience Level <span class="req">*</span></label>
@@ -652,11 +683,14 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
+  const SUPABASE_URL = 'https://rutvibthwsuvbbcqvtib.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1dHZpYnRod3N1dmJiY3F2dGliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MzUzMzYsImV4cCI6MjA4ODAxMTMzNn0.PzNc4ymSvXxiL2QpvMrNyrfzRc5F-dMMrTpk28niqho';
 /* ── STATE ── */
 let currentStep = 1;
 const TOTAL_STEPS = 5;
 const toolTags = [];
 const projectTags = [];
+const selectedSkills = [];
 
 const stepMeta = [
   { title: 'Academic Information',    sub: 'Fill in your educational background to get started.' },
@@ -741,8 +775,15 @@ function validateStep(step) {
     req('year-study', 'e-year',     !!g('year-study').value);
     req('grad-year',  'e-grad',     !!g('grad-year').value);
   } else if (step === 2) {
-    req('primary-skill','e-primary',!!g('primary-skill').value);
     req('exp-level',   'e-exp',     !!g('exp-level').value);
+    const hasMinSkills = selectedSkills.length >= 3;
+    const skillsErr = document.getElementById('e-skills');
+    if (!hasMinSkills) { skillsErr.classList.add('on'); ok = false; }
+    else skillsErr.classList.remove('on');
+    const hasMissingSkillField = selectedSkills.some(skill => skill.name === 'Other' && !skill.field.trim());
+    const fieldErr = document.getElementById('e-skill-fields');
+    if (selectedSkills.length && hasMissingSkillField) { fieldErr.classList.add('on'); ok = false; }
+    else fieldErr.classList.remove('on');
     const hasTools = toolTags.length > 0 || g('tools-input').value.trim();
     const toolErr = document.getElementById('e-tools');
     if (!hasTools) { toolErr.classList.add('on'); ok = false; }
@@ -775,6 +816,52 @@ function g(id) { return document.getElementById(id); }
 /* ── CHIP HELPERS ── */
 function multi(el) { el.classList.toggle('on'); }
 function chipsOf(id) { return [...document.querySelectorAll('#' + id + ' .chip.on')].map(c => c.textContent.trim()); }
+
+function addSelectedSkill() {
+  const select = g('skill-select');
+  const value = select.value;
+  if (!value) return;
+  if (selectedSkills.some(skill => skill.name === value)) {
+    showToast('Skill already added.', 'bad');
+    return;
+  }
+  selectedSkills.push({ name: value, field: '' });
+  select.selectedIndex = 0;
+  renderSelectedSkills();
+}
+
+function updateSkillField(idx, val) {
+  if (!selectedSkills[idx]) return;
+  selectedSkills[idx].field = val;
+  if (val.trim()) g('e-skill-fields').classList.remove('on');
+}
+
+function removeSelectedSkill(idx) {
+  selectedSkills.splice(idx, 1);
+  renderSelectedSkills();
+}
+
+function renderSelectedSkills() {
+  const list = g('selected-skill-list');
+  if (!list) return;
+  list.innerHTML = '';
+  selectedSkills.forEach((skill, idx) => {
+    const row = document.createElement('div');
+    row.className = 'skill-item';
+    const fieldInput = skill.name === 'Other'
+      ? `<input class="inp" type="text" placeholder="Specify field (e.g. Blockchain, Game Dev)" value="${skill.field.replace(/"/g, '&quot;')}" oninput="updateSkillField(${idx}, this.value)">`
+      : '';
+    row.innerHTML = `
+      <div class="skill-item-name">${skill.name}</div>
+      ${fieldInput}
+      <button type="button" class="skill-remove" onclick="removeSelectedSkill(${idx})" aria-label="Remove skill">×</button>
+    `;
+    list.appendChild(row);
+  });
+  if (selectedSkills.length >= 3) g('e-skills').classList.remove('on');
+  const primary = selectedSkills[0]?.name || 'Primary skill not set';
+  if (g('preview-skill')) g('preview-skill').textContent = primary;
+}
 
 /* ── TAG INPUT ── */
 function addTag(type, val) {
@@ -845,42 +932,72 @@ async function handleSubmit() {
   g('overlay').classList.add('show');
 
   const data = {
-    college:       g('college').value.trim(),
-    degree:        g('degree').value,
-    specialization:g('specialization').value.trim(),
-    year_of_study: g('year-study').value,
-    grad_year:     g('grad-year').value,
-    cgpa:          g('cgpa').value.trim() || null,
-    primary_skill: g('primary-skill').value,
-    exp_level:     g('exp-level').value,
+    college:          g('college').value.trim(),
+    degree:           g('degree').value,
+    specialization:   g('specialization').value.trim(),
+    year_of_study:    g('year-study').value,
+    grad_year:        g('grad-year').value,
+    cgpa:             g('cgpa').value.trim() || null,
+    primary_skill:    selectedSkills[0]?.name || null,
+    skills:           selectedSkills.map(s => s.name),
+    skill_fields:     selectedSkills.map(s => ({ skill: s.name, field: s.field.trim() })),
+    exp_level:        g('exp-level').value,
     secondary_skills: chipsOf('sec-skill-chips'),
-    tools:         toolTags,
-    github:        g('github').value.trim(),
-    linkedin:      g('linkedin').value.trim(),
-    portfolio:     g('portfolio').value.trim() || null,
-    other_link:    g('other-link').value.trim() || null,
-    projects:      projectTags,
-    availability:  g('availability').value,
-    remote_pref:   g('remote-pref').value,
-    project_types: chipsOf('proj-type-chips'),
-    rate:          g('rate').value.trim() || null,
-    timezone:      g('timezone').value || null,
-    bio:           g('bio').value.trim(),
-    tagline:       g('tagline').value.trim(),
-    languages:     chipsOf('lang-chips'),
-    status:        'pending_verification',
-    submitted_at:  new Date().toISOString()
+    tools:            toolTags,
+    github:           g('github').value.trim(),
+    linkedin:         g('linkedin').value.trim(),
+    portfolio:        g('portfolio').value.trim() || null,
+    other_link:       g('other-link').value.trim() || null,
+    projects:         projectTags,
+    availability:     g('availability').value,
+    remote_pref:      g('remote-pref').value,
+    project_types:    chipsOf('proj-type-chips'),
+    rate:             g('rate').value.trim() || null,
+    timezone:         g('timezone').value || null,
+    bio:              g('bio').value.trim(),
+    tagline:          g('tagline').value.trim(),
+    languages:        chipsOf('lang-chips'),
+    status:           'pending_verification',
+    submitted_at:     new Date().toISOString()
   };
 
-  localStorage.setItem('mt_freelancer_profile', JSON.stringify(data));
-  await new Promise(r => setTimeout(r, 1400));
+  try {
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/freelancer_profiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
 
-  g('overlay').classList.remove('show');
-  g('success-ov').classList.add('show');
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message || 'Supabase error');
+    }
 
-  let n = 5;
-  const cd = g('cdown');
-  const iv = setInterval(() => { if (--n <= 0) { clearInterval(iv); goToDash(); } else cd.textContent = n; }, 1000);
+    // Also save locally as backup
+    localStorage.setItem('mt_freelancer_profile', JSON.stringify(data));
+
+    g('overlay').classList.remove('show');
+    g('success-ov').classList.add('show');
+
+    let n = 5;
+    const cd = g('cdown');
+    const iv = setInterval(() => {
+      if (--n <= 0) { clearInterval(iv); goToDash(); }
+      else cd.textContent = n;
+    }, 1000);
+
+  } catch (error) {
+    g('overlay').classList.remove('show');
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Submit Profile';
+    showToast('❌ Submission failed: ' + error.message, 'bad');
+    console.error('Supabase error:', error);
+  }
 }
 
 function goToDash() { window.location.href = 'login.html?dashboard=freelancer'; }
