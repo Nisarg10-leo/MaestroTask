@@ -149,6 +149,100 @@ body::before {
 .file-upload input { display: none; }
 .file-name { font-size: .78rem; color: var(--teal); margin-top: 6px; font-weight: 600; }
 
+/* profile photo upload */
+.photo-upload-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.photo-preview {
+  width: 78px; height: 78px; border-radius: 50%;
+  border: 2px solid rgba(26,158,143,.25);
+  background: linear-gradient(135deg, #1a9e8f, #22c5b3);
+  position: relative; overflow: hidden;
+  display: grid; place-items: center;
+  color: #fff; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800;
+}
+.photo-preview img {
+  width: 100%; height: 100%; object-fit: cover; display: none;
+}
+.photo-preview.has-photo img { display: block; }
+.photo-preview.has-photo .photo-fallback { display: none; }
+.photo-preview.bad { border-color: var(--red); box-shadow: 0 0 0 3px rgba(204,0,0,.1); }
+.photo-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.photo-btn {
+  padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: #f4f8fb; color: var(--ink); cursor: pointer;
+  font-size: .82rem; font-weight: 700; transition: all .2s;
+}
+.photo-btn:hover { border-color: var(--teal); color: var(--teal); }
+.photo-btn input { display: none; }
+.photo-clear {
+  padding: 9px 14px; border: 1.5px solid rgba(204,0,0,.2); border-radius: 10px;
+  background: #fff5f5; color: #b42318; cursor: pointer;
+  font-size: .82rem; font-weight: 700; transition: all .2s;
+}
+.photo-clear:hover { border-color: #f04438; color: #912018; }
+.btn-add-photo {
+  padding: 10px 16px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: #f4f8fb; color: var(--ink); cursor: pointer;
+  font-size: .84rem; font-weight: 700; transition: all .2s;
+}
+.btn-add-photo:hover { border-color: var(--teal); color: var(--teal); }
+
+/* photo crop modal */
+.photo-modal {
+  position: fixed; inset: 0; z-index: 9200;
+  background: rgba(10,10,15,.72); backdrop-filter: blur(8px);
+  display: none; place-items: center; padding: 16px;
+}
+.photo-modal.show { display: grid; }
+.photo-modal-box {
+  width: min(94vw, 440px); background: var(--card); border-radius: 18px;
+  border: 1px solid var(--border); padding: 18px;
+  box-shadow: 0 20px 70px rgba(10,10,15,.28);
+}
+.photo-modal-head { margin-bottom: 12px; }
+.photo-modal-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--ink); }
+.photo-modal-sub { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+.photo-src-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.photo-src-btn {
+  padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: #f4f8fb; color: var(--ink); cursor: pointer;
+  font-size: .8rem; font-weight: 700; transition: all .2s;
+}
+.photo-src-btn:hover { border-color: var(--teal); color: var(--teal); }
+.crop-stage {
+  width: 100%; aspect-ratio: 1/1; border-radius: 14px;
+  background: #0f141a; position: relative; overflow: hidden;
+}
+.crop-media-wrap { position: absolute; inset: 0; overflow: hidden; touch-action: none; cursor: grab; }
+.crop-media-wrap.dragging { cursor: grabbing; }
+.crop-media {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) scale(var(--scale, 1));
+  transform-origin: center center; user-select: none; -webkit-user-drag: none;
+}
+#crop-image { display: none; }
+#crop-video, #crop-image { max-width: none; max-height: none; }
+.crop-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at center, transparent 0 42%, rgba(10,10,15,.5) 43%);
+}
+.crop-circle {
+  position: absolute; left: 50%; top: 50%; width: 84%; height: 84%;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  border: 2px dashed rgba(255,255,255,.92); box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset;
+}
+.crop-ctrls { margin-top: 12px; }
+.crop-zoom-lbl { display: flex; justify-content: space-between; font-size: .74rem; color: var(--muted); margin-bottom: 5px; }
+.crop-zoom { width: 100%; accent-color: var(--teal); }
+.photo-modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.photo-cancel, .photo-ok {
+  padding: 10px 14px; border-radius: 10px; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .2s;
+}
+.photo-cancel { border: 1.5px solid var(--border); background: #f4f8fb; color: var(--ink); }
+.photo-cancel:hover { border-color: var(--ink); }
+.photo-ok { border: none; background: var(--teal); color: #fff; }
+.photo-ok:hover { background: #167f72; }
+.photo-ok:disabled { opacity: .45; cursor: not-allowed; }
+
 /* chips */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { padding: 7px 15px; border-radius: 100px; font-size: .8rem; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: #f4f8fb; color: var(--muted); transition: all .2s; user-select: none; }
@@ -250,6 +344,8 @@ body::before {
   .btn-next, .btn-submit-final, .btn-prev { width: 100%; justify-content: center; }
   .swire { width: 28px; }
   .sname { display: none; }
+  .photo-modal-foot { flex-direction: column; }
+  .photo-cancel, .photo-ok { width: 100%; }
 }
 </style>
 </head>
@@ -628,11 +724,35 @@ body::before {
 
       <div class="divider"></div>
 
+      <div class="field">
+        <label class="lbl">Profile Photo <span class="req">*</span></label>
+        <div class="photo-upload-row">
+          <div class="photo-preview" id="photo-preview">
+            <img id="photo-preview-img" alt="Profile photo preview">
+            <span class="photo-fallback">?</span>
+          </div>
+          <div>
+            <div class="photo-actions">
+              <button type="button" class="btn-add-photo" id="btn-add-photo" onclick="openPhotoModal()">+ Add Photo</button>
+              <button type="button" class="photo-clear" id="btn-remove-photo" onclick="clearProfilePhoto()" style="display:none;">Remove</button>
+            </div>
+            <div class="hint">Click Add Photo, then choose from gallery or take a live webcam photo.</div>
+            <div class="file-name" id="profile-photo-name"></div>
+            <div class="err" id="e-photo">Please add your profile photo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
       <!-- PROFILE PREVIEW -->
       <div style="background: rgba(26,158,143,.04); border: 1px solid rgba(26,158,143,.15); border-radius: 14px; padding: 20px 24px;">
         <div style="font-size:.78rem; font-weight:700; color:var(--teal); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;">📋 Profile Summary Preview</div>
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
-          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#1a9e8f,#22c5b3);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;" id="avatar-initials">?</div>
+          <div class="photo-preview" style="width:48px;height:48px;" id="avatar-circle">
+            <img id="avatar-img" alt="Avatar preview">
+            <span class="photo-fallback" id="avatar-initials">?</span>
+          </div>
           <div>
             <div style="font-weight:700;font-size:.95rem;color:var(--ink);" id="preview-tagline">Your tagline will appear here…</div>
             <div style="font-size:.78rem;color:var(--muted);margin-top:3px;" id="preview-skill">Primary skill not set</div>
@@ -674,8 +794,43 @@ body::before {
     <p class="s-msg">Your freelancer profile has been submitted. Our AI will verify your skills and score your profile shortly.</p>
     <div class="s-badge">⏳ Pending Skill Verification</div>
     <br>
-    <button class="btn-dash" onclick="goToDash()">Go to Dashboard →</button>
+    <button class="btn-dash" onclick="goToDash()">Go to Quiz →</button>
     <div class="redirect-note">Auto-redirecting in <strong id="cdown">5</strong>s…</div>
+  </div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="photo-modal" id="photo-modal">
+  <div class="photo-modal-box">
+    <div class="photo-modal-head">
+      <div class="photo-modal-title">Set Profile Photo</div>
+      <div class="photo-modal-sub">Choose source, fit inside the dotted circle, then click OK.</div>
+    </div>
+
+    <div class="photo-src-actions">
+      <button type="button" class="photo-src-btn" onclick="triggerGalleryPick()">🖼️ Choose from Gallery</button>
+      <button type="button" class="photo-src-btn" onclick="startCameraCapture()">📷 Take Photo</button>
+      <input type="file" id="profile-photo-gallery" accept="image/*" hidden>
+    </div>
+
+    <div class="crop-stage">
+      <div class="crop-media-wrap" id="crop-media-wrap">
+        <video id="crop-video" class="crop-media" playsinline autoplay muted></video>
+        <img id="crop-image" class="crop-media" alt="Crop source">
+      </div>
+      <div class="crop-overlay"></div>
+      <div class="crop-circle"></div>
+    </div>
+
+    <div class="crop-ctrls">
+      <div class="crop-zoom-lbl"><span>Zoom</span><span id="zoom-val">100%</span></div>
+      <input id="crop-zoom" class="crop-zoom" type="range" min="1" max="3" step="0.01" value="1">
+    </div>
+
+    <div class="photo-modal-foot">
+      <button type="button" class="photo-cancel" onclick="closePhotoModal()">Cancel</button>
+      <button type="button" class="photo-ok" id="photo-ok" onclick="confirmProfilePhoto()" disabled>OK</button>
+    </div>
   </div>
 </div>
 
@@ -691,6 +846,17 @@ const TOTAL_STEPS = 5;
 const toolTags = [];
 const projectTags = [];
 const selectedSkills = [];
+let profilePhotoUrl = '';
+let activePhotoStream = null;
+let cropSource = null;
+let cropSourceKind = '';
+let cropBaseScale = 1;
+let cropZoom = 1;
+let cropX = 0;
+let cropY = 0;
+let dragActive = false;
+let dragStartX = 0;
+let dragStartY = 0;
 
 const stepMeta = [
   { title: 'Academic Information',    sub: 'Fill in your educational background to get started.' },
@@ -724,6 +890,7 @@ function showStep() {
   });
   updateStepper();
   updateNav();
+  syncSubmitPhotoState();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -756,6 +923,17 @@ function updateNav() {
   } else {
     nextBtn.className = 'btn-next';
     nextBtn.innerHTML = 'Next Step →';
+  }
+  syncSubmitPhotoState();
+}
+
+function syncSubmitPhotoState() {
+  const nextBtn = g('btn-next');
+  if (!nextBtn) return;
+  if (currentStep === TOTAL_STEPS) {
+    nextBtn.disabled = !profilePhotoUrl;
+  } else {
+    nextBtn.disabled = false;
   }
 }
 
@@ -802,6 +980,17 @@ function validateStep(step) {
     const bio = g('bio').value.trim();
     req('bio',     'e-bio',     bio.length >= 80);
     req('tagline', 'e-tagline', !!g('tagline').value.trim());
+    const hasPhoto = !!profilePhotoUrl;
+    const photoErr = g('e-photo');
+    const photoPreview = g('photo-preview');
+    if (!hasPhoto) {
+      photoErr.classList.add('on');
+      photoPreview.classList.add('bad');
+      ok = false;
+    } else {
+      photoErr.classList.remove('on');
+      photoPreview.classList.remove('bad');
+    }
   }
 
   if (!ok) showToast('⚠️ Please fill in all required fields.', 'bad');
@@ -905,6 +1094,188 @@ function handleFile(input) {
   g('resume-name').textContent = '✓ ' + file.name;
 }
 
+function handleProfilePhoto(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showToast('Please choose an image file.', 'bad'); return; }
+  if (file.size > 5 * 1024 * 1024) { showToast('Image too large — max 5MB', 'bad'); return; }
+  stopCameraStream();
+  const img = g('crop-image');
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    cropSource = img;
+    cropSourceKind = 'image';
+    g('crop-video').style.display = 'none';
+    img.style.display = 'block';
+    resetCropForSource(img.naturalWidth, img.naturalHeight);
+    g('photo-ok').disabled = false;
+  };
+  img.src = url;
+  g('profile-photo-name').textContent = 'Selected: ' + file.name;
+}
+
+function clearProfilePhoto() {
+  if (profilePhotoUrl) URL.revokeObjectURL(profilePhotoUrl);
+  profilePhotoUrl = '';
+  g('profile-photo-gallery').value = '';
+  g('photo-preview-img').removeAttribute('src');
+  g('avatar-img').removeAttribute('src');
+  g('photo-preview').classList.remove('has-photo');
+  g('photo-preview').classList.remove('bad');
+  g('avatar-circle').classList.remove('has-photo');
+  g('profile-photo-name').textContent = '';
+  g('btn-add-photo').textContent = '+ Add Photo';
+  g('btn-remove-photo').style.display = 'none';
+  g('e-photo').classList.add('on');
+  syncSubmitPhotoState();
+}
+
+function openPhotoModal() {
+  g('photo-modal').classList.add('show');
+  g('photo-ok').disabled = true;
+  g('crop-image').style.display = 'none';
+  g('crop-video').style.display = 'none';
+  g('zoom-val').textContent = '100%';
+  g('crop-zoom').value = '1';
+}
+
+function closePhotoModal() {
+  g('photo-modal').classList.remove('show');
+  stopCameraStream();
+}
+
+function triggerGalleryPick() {
+  g('profile-photo-gallery').click();
+}
+
+async function startCameraCapture() {
+  try {
+    stopCameraStream();
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    activePhotoStream = stream;
+    const video = g('crop-video');
+    video.srcObject = stream;
+    await video.play();
+    cropSource = video;
+    cropSourceKind = 'video';
+    g('crop-image').style.display = 'none';
+    video.style.display = 'block';
+    resetCropForSource(video.videoWidth || 1280, video.videoHeight || 720);
+    g('photo-ok').disabled = false;
+  } catch {
+    showToast('Camera permission denied or unavailable.', 'bad');
+  }
+}
+
+function stopCameraStream() {
+  if (!activePhotoStream) return;
+  activePhotoStream.getTracks().forEach(t => t.stop());
+  activePhotoStream = null;
+  g('crop-video').srcObject = null;
+}
+
+function resetCropForSource(srcW, srcH) {
+  const stage = g('crop-media-wrap');
+  const size = stage.clientWidth || 320;
+  cropBaseScale = Math.max(size / srcW, size / srcH);
+  cropZoom = 1;
+  cropX = 0;
+  cropY = 0;
+  g('crop-zoom').value = '1';
+  updateCropTransform();
+  g('zoom-val').textContent = '100%';
+}
+
+function updateCropTransform() {
+  const scale = cropBaseScale * cropZoom;
+  g('crop-video').style.setProperty('--x', cropX + 'px');
+  g('crop-video').style.setProperty('--y', cropY + 'px');
+  g('crop-video').style.setProperty('--scale', scale);
+  g('crop-image').style.setProperty('--x', cropX + 'px');
+  g('crop-image').style.setProperty('--y', cropY + 'px');
+  g('crop-image').style.setProperty('--scale', scale);
+}
+
+function confirmProfilePhoto() {
+  if (!cropSource) return;
+  const stage = g('crop-media-wrap');
+  const out = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = out;
+  canvas.height = out;
+  const ctx = canvas.getContext('2d');
+  const srcW = cropSourceKind === 'video' ? cropSource.videoWidth : cropSource.naturalWidth;
+  const srcH = cropSourceKind === 'video' ? cropSource.videoHeight : cropSource.naturalHeight;
+  const scale = cropBaseScale * cropZoom * (out / stage.clientWidth);
+  const dx = (out / 2) + (cropX * (out / stage.clientWidth));
+  const dy = (out / 2) + (cropY * (out / stage.clientWidth));
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(out / 2, out / 2, out / 2, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.translate(dx, dy);
+  ctx.scale(scale, scale);
+  ctx.drawImage(cropSource, -srcW / 2, -srcH / 2, srcW, srcH);
+  ctx.restore();
+
+  canvas.toBlob(blob => {
+    if (!blob) return;
+    if (profilePhotoUrl) URL.revokeObjectURL(profilePhotoUrl);
+    profilePhotoUrl = URL.createObjectURL(blob);
+    g('photo-preview-img').src = profilePhotoUrl;
+    g('avatar-img').src = profilePhotoUrl;
+    g('photo-preview').classList.add('has-photo');
+    g('photo-preview').classList.remove('bad');
+    g('avatar-circle').classList.add('has-photo');
+    g('profile-photo-name').textContent = '✓ Photo added';
+    g('btn-add-photo').textContent = 'Change Photo';
+    g('btn-remove-photo').style.display = 'inline-block';
+    g('e-photo').classList.remove('on');
+    syncSubmitPhotoState();
+    closePhotoModal();
+  }, 'image/jpeg', 0.92);
+}
+
+g('profile-photo-gallery').addEventListener('change', e => {
+  openPhotoModal();
+  handleProfilePhoto(e.target);
+});
+
+g('crop-zoom').addEventListener('input', e => {
+  cropZoom = Number(e.target.value || 1);
+  g('zoom-val').textContent = Math.round(cropZoom * 100) + '%';
+  updateCropTransform();
+});
+
+const cropWrap = g('crop-media-wrap');
+cropWrap.addEventListener('pointerdown', e => {
+  if (!cropSource) return;
+  dragActive = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  cropWrap.classList.add('dragging');
+  cropWrap.setPointerCapture(e.pointerId);
+});
+cropWrap.addEventListener('pointermove', e => {
+  if (!dragActive) return;
+  cropX += e.clientX - dragStartX;
+  cropY += e.clientY - dragStartY;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  updateCropTransform();
+});
+cropWrap.addEventListener('pointerup', e => {
+  dragActive = false;
+  cropWrap.classList.remove('dragging');
+  cropWrap.releasePointerCapture(e.pointerId);
+});
+cropWrap.addEventListener('pointercancel', () => {
+  dragActive = false;
+  cropWrap.classList.remove('dragging');
+});
+
 /* ── CHAR COUNTER ── */
 function cc(inId, numId, max) {
   const v = g(inId).value.length;
@@ -925,6 +1296,12 @@ g('bio').addEventListener('input', () => {
 /* ── SUBMIT ── */
 async function handleSubmit() {
   if (!validateStep(5)) return;
+  if (!profilePhotoUrl) {
+    g('e-photo').classList.add('on');
+    g('photo-preview').classList.add('bad');
+    showToast('⚠️ Profile photo is required.', 'bad');
+    return;
+  }
 
   const btn = g('btn-next');
   btn.disabled = true;
@@ -1000,7 +1377,7 @@ async function handleSubmit() {
   }
 }
 
-function goToDash() { window.location.href = 'login.html?dashboard=freelancer'; }
+function goToDash() { window.location.href = 'quiz.html'; }
 
 /* ── CLEAR ERRORS ON INPUT ── */
 document.querySelectorAll('.inp,.sel,.txta').forEach(el => {
